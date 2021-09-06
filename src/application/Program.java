@@ -1,13 +1,17 @@
 package application;
 
-import java.sql.Connection;
-import database.Conexao;
+import model.dao.ClienteDao;
+import model.dao.DaoFabrica;
+import model.domain.Cliente;
 
 public class Program {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) {		
 		
-		Connection conn = Conexao.abrirConexao();
-		Conexao.fecharConexao();
+		ClienteDao clienteDao = DaoFabrica.criaClienteDao();
+		
+		Cliente c1 = clienteDao.buscarPorId(1);
+		
+		System.out.println(c1);
 	}
 }

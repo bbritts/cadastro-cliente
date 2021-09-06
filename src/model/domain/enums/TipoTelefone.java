@@ -1,4 +1,4 @@
-package domain.enums;
+package model.domain.enums;
 
 public enum TipoTelefone {
 	

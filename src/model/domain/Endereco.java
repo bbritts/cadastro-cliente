@@ -1,10 +1,13 @@
-package domain;
+package model.domain;
 
-import domain.enums.SiglaEstado;
+import java.io.Serializable;
 
-public class Endereco {
-	
-	//Atributos
+import model.domain.enums.SiglaEstado;
+
+public class Endereco implements Serializable {
+
+	// Atributos
+	private static final long serialVersionUID = 1L;
 	
 	private String rua;
 	private String numero;
@@ -13,11 +16,14 @@ public class Endereco {
 	private String cidade;
 	private SiglaEstado sigla_estado;
 	
-	//Construtor
-	
+	//Construtor Padrão
+	public Endereco() {		
+	}
+
+	// Construtor
 	public Endereco(String rua, String numero, String bairro, 
 			String complemento, String cidade, SiglaEstado sigla_estado) {
-		
+
 		setRua(rua);
 		setNumero(numero);
 		setBairro(bairro);
@@ -25,8 +31,8 @@ public class Endereco {
 		setCidade(cidade);
 		setSigla_estado(sigla_estado);
 	}
-	
-	//Getters e Setters
+
+	// Getters e Setters
 
 	public String getRua() {
 		return rua;
@@ -74,6 +80,14 @@ public class Endereco {
 
 	public void setSigla_estado(SiglaEstado sigla_estado) {
 		this.sigla_estado = sigla_estado;
-	}	
+	}
+	
+	@Override
+	public String toString() {
+		return "[rua=" + rua + ", numero=" + numero + ", bairro=" 
+							 + bairro + ", complemento=" + complemento
+							 + ", cidade=" + cidade + ", sigla_estado=" 
+							 + sigla_estado + "]";
+	}
 
 }

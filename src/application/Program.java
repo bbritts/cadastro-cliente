@@ -5,6 +5,8 @@ import java.util.List;
 import model.dao.ClienteDao;
 import model.dao.DaoFabrica;
 import model.domain.Cliente;
+import model.domain.enums.SiglaEstado;
+import model.domain.enums.TipoTelefone;
 
 public class Program {
 
@@ -20,11 +22,24 @@ public class Program {
 		
 		System.out.println("------- Achando todos os clientes do banco -----------");
 		
-		List<Cliente> lista = clienteDao.listarTodos();
+		List<Cliente> lista = clienteDao.listarTodos();		
 		
 		//foreach
 		for (Cliente obj : lista) {
 			System.out.println(obj);
-		}		
+		}	
+		
+		System.out.println("------- Inserindo um cliente no banco -----------");
+		
+		Cliente clienteNovo = new Cliente(null, "Romário", "Faria", "09876543210", 
+				"romario@fifa.com", "Rua dos Camelos", "890", "Jardins", null, 
+				"Campo Grande", SiglaEstado.MS, "67", "98765432", TipoTelefone.CELULAR);
+		
+		clienteDao.insere(clienteNovo);
+		System.out.println("Inserido com sucesso. Novo cliente: %n");
+		System.out.println(clienteNovo.getId());
+		Cliente c3 = clienteDao.buscarPorId(clienteNovo.getId());
+		System.out.println(c3);
+		
 	}
 }

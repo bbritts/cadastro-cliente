@@ -8,21 +8,21 @@ public class Endereco implements Serializable {
 
 	// Atributos
 	private static final long serialVersionUID = 1L;
-	
+
 	private String rua;
 	private String numero;
 	private String bairro;
 	private String complemento;
 	private String cidade;
 	private SiglaEstado sigla_estado;
-	
-	//Construtor Padrão
-	public Endereco() {		
+
+	// Construtor Padrão
+	public Endereco() {
 	}
 
 	// Construtor
-	public Endereco(String rua, String numero, String bairro, 
-			String complemento, String cidade, SiglaEstado sigla_estado) {
+	public Endereco(String rua, String numero, String bairro, String complemento, String cidade,
+			SiglaEstado sigla_estado) {
 
 		setRua(rua);
 		setNumero(numero);
@@ -63,7 +63,12 @@ public class Endereco implements Serializable {
 	}
 
 	public void setComplemento(String complemento) {
-		this.complemento = complemento;
+
+		if (complemento == null) {
+			this.complemento = "null";
+		} else {
+			this.complemento = complemento;
+		}
 	}
 
 	public String getCidade() {
@@ -81,13 +86,11 @@ public class Endereco implements Serializable {
 	public void setSigla_estado(SiglaEstado sigla_estado) {
 		this.sigla_estado = sigla_estado;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "[rua=" + rua + ", numero=" + numero + ", bairro=" 
-							 + bairro + ", complemento=" + complemento
-							 + ", cidade=" + cidade + ", sigla_estado=" 
-							 + sigla_estado + "]";
+		return "[rua=" + rua + ", numero=" + numero + ", bairro=" + bairro + ", complemento=" + complemento
+				+ ", cidade=" + cidade + ", sigla_estado=" + sigla_estado + "]";
 	}
 
 }

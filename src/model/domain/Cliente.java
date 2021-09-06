@@ -7,7 +7,7 @@ import model.domain.enums.TipoTelefone;
 public class Cliente implements Serializable{
 
 	private static final long serialVersionUID = 1L;
-	private int id;
+	private Integer id;
 	private String nome;
 	private String sobrenome;
 	private String cpf;
@@ -20,12 +20,11 @@ public class Cliente implements Serializable{
 	}
 	
 	//Construtor
-	public Cliente(int id, String nome, String sobrenome, String cpf, 
+	public Cliente(Integer id, String nome, String sobrenome, String cpf, 
 			String email, String rua, String numero, String bairro, 
 			String complemento, String cidade, SiglaEstado sigla_estado,
-			String ddd, String telefone, TipoTelefone tipo) {
+			String ddd, String telefone, TipoTelefone tipo) {		
 		
-		setId(id);
 		setNome(nome);
 		setSobrenome(sobrenome);
 		setCpf(cpf);
@@ -38,7 +37,7 @@ public class Cliente implements Serializable{
 	
 	//Getters e Setters
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 

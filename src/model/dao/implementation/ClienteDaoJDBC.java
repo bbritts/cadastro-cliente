@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +28,74 @@ public class ClienteDaoJDBC implements ClienteDao {
 
 	@Override
 	public void insere(Cliente cliente) {
-		// TODO Auto-generated method stub
 
+		PreparedStatement st = null;
+
+		try {
+			st = conexao.prepareStatement(
+					"INSERT INTO clientes (nome, sobrenome, cpf, email) VALUES (?, ?, ?, ?)",
+					Statement.RETURN_GENERATED_KEYS);			
+
+			st.setString(1, cliente.getNome());
+			st.setString(2, cliente.getSobrenome());
+			st.setString(3, cliente.getCpf());
+			st.setString(4, cliente.getEmail());			
+			
+			int linhasInseridas = st.executeUpdate();			
+			
+			if (linhasInseridas > 0) {
+				ResultSet rs = st.getGeneratedKeys();
+
+				if (rs.next()) {
+					int id = rs.getInt(1);
+					cliente.setId(id);
+					
+					insereEndereco(cliente, st);
+					insereTelefone(cliente, st);
+
+					// fecha ResultSet que não será mais usado
+					Conexao.fechaResultSet(rs);
+				} 
+			} else {
+				throw new DBException("Erro na inserção de dados do Cliente");
+			}
+			
+		} catch (SQLException e) {
+			throw new DBException(e.getMessage());
+		} finally {
+			Conexao.fechaStatement(st);
+		}
+	}
+
+	private void insereTelefone(Cliente cliente, PreparedStatement st) throws SQLException {
+		
+		st = conexao.prepareStatement("INSERT INTO telefones VALUES (?, ?, ?, ?) ");
+		
+		st.setInt(1, cliente.getId());
+		st.setString(2, cliente.getTelefone().getDdd());
+		st.setString(3, cliente.getTelefone().getTelefone());
+		st.setString(4, cliente.getTelefone().getTipo().toString());
+		
+		if(st.executeUpdate() < 1) {
+			throw new DBException("Erro na inserção de Telefones");
+		}
+	}
+
+	private void insereEndereco(Cliente cliente, PreparedStatement st) throws SQLException {
+		
+		st = conexao.prepareStatement("INSERT INTO enderecos VALUES (?, ?, ?, ?, ?, ?, ?) ");
+		
+		st.setInt(1, cliente.getId());
+		st.setString(2, cliente.getEndereco().getRua());
+		st.setString(3, cliente.getEndereco().getNumero());
+		st.setString(4, cliente.getEndereco().getBairro());
+		st.setString(5, cliente.getEndereco().getComplemento());
+		st.setString(6, cliente.getEndereco().getCidade());
+		st.setString(7, cliente.getEndereco().getSigla_estado().toString());
+		
+		if(st.executeUpdate() < 1) {
+			throw new DBException("Erro na inserção de Enderecos");
+		}
 	}
 
 	@Override
@@ -91,6 +158,7 @@ public class ClienteDaoJDBC implements ClienteDao {
 		ResultSet rs = null;
 
 		try {
+
 			st = conexao.prepareStatement("SELECT * FROM clientes c INNER JOIN enderecos e " + "ON c.id = e.id_cliente "
 					+ "NATURAL JOIN telefones t " + "ORDER BY nome");
 

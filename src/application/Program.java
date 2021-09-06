@@ -10,7 +10,9 @@ public class Program {
 		
 		ClienteDao clienteDao = DaoFabrica.criaClienteDao();
 		
-		Cliente c1 = clienteDao.buscarPorId(1);
+		System.out.println("------ Achando cliente por ID ------");
+		
+		Cliente c1 = clienteDao.buscarPorId(2);
 		
 		System.out.println(c1);
 	}

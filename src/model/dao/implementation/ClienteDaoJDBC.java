@@ -59,30 +59,14 @@ public class ClienteDaoJDBC implements ClienteDao{
 			
 			if(rs.next()) {
 				
-				//Resgata os dados do telefone
-				Telefone tel = new Telefone();
-				tel.setDdd(rs.getString("ddd"));
-				tel.setTelefone(rs.getString("telefone"));
-				tel.setTipo(TipoTelefone.valueOf(rs.getString("tipo")));				
+				//Resgata os dados do telefone e instancia o objeto
+				Telefone tel = instanciaTelefone(rs);								
 				
-				//Resgata os dados do Endereço
-				Endereco end = new Endereco();
-				end.setRua(rs.getString("rua"));
-				end.setNumero(rs.getString("numero"));
-				end.setBairro(rs.getString("bairro"));
-				end.setComplemento(rs.getString("complemento"));
-				end.setCidade(rs.getString("cidade"));
-				end.setSigla_estado(SiglaEstado.valueOf(rs.getString("sigla_estado")));
+				//Resgata os dados do Endereço e instancia o objeto
+				Endereco end = instanciaEndereco(rs);
 				
 				//Resgata os dados do Cliente
-				Cliente cliente = new Cliente();
-				cliente.setId(rs.getInt("id"));
-				cliente.setNome(rs.getString("nome"));
-				cliente.setSobrenome(rs.getString("sobrenome"));
-				cliente.setCpf(rs.getString("cpf"));
-				cliente.setEmail(rs.getString("email"));
-				cliente.setEndereco(end);
-				cliente.setTelefone(tel);
+				Cliente cliente = instanciaCliente(rs, tel, end);
 				
 				return cliente;
 			}
@@ -104,4 +88,38 @@ public class ClienteDaoJDBC implements ClienteDao{
 		return null;
 	}
 
+	
+	//Métodos privados para instanciar as classes Endereco e Telefone com as informações do ResultSet
+	
+	private Endereco instanciaEndereco(ResultSet rs) throws SQLException {
+		Endereco end = new Endereco();
+		end.setRua(rs.getString("rua"));
+		end.setNumero(rs.getString("numero"));
+		end.setBairro(rs.getString("bairro"));
+		end.setComplemento(rs.getString("complemento"));
+		end.setCidade(rs.getString("cidade"));
+		end.setSigla_estado(SiglaEstado.valueOf(rs.getString("sigla_estado")));
+		return end;
+	}
+
+	private Telefone instanciaTelefone(ResultSet rs) throws SQLException {
+		Telefone tel = new Telefone();
+		tel.setDdd(rs.getString("ddd"));
+		tel.setTelefone(rs.getString("telefone"));
+		tel.setTipo(TipoTelefone.valueOf(rs.getString("tipo")));
+		return tel;
+	}
+	
+	private Cliente instanciaCliente(ResultSet rs, Telefone tel, Endereco end) throws SQLException {
+		
+		Cliente cliente = new Cliente();
+		cliente.setId(rs.getInt("id"));
+		cliente.setNome(rs.getString("nome"));
+		cliente.setSobrenome(rs.getString("sobrenome"));
+		cliente.setCpf(rs.getString("cpf"));
+		cliente.setEmail(rs.getString("email"));
+		cliente.setEndereco(end);
+		cliente.setTelefone(tel);
+		return cliente;
+	}
 }

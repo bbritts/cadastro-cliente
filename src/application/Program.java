@@ -39,7 +39,6 @@ public class Program {
 		System.out.println("Inserido com sucesso. Novo cliente: %n");
 		System.out.println(clienteNovo.getId());
 		Cliente c3 = clienteDao.buscarPorId(clienteNovo.getId());
-		System.out.println(c3);
-		
+		System.out.println(c3);		
 	}
 }

@@ -4,11 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import database.Conexao;
 import database.DBException;
-
 import model.dao.ClienteDao;
 import model.domain.Cliente;
 import model.domain.Endereco;
@@ -16,11 +16,11 @@ import model.domain.Telefone;
 import model.domain.enums.SiglaEstado;
 import model.domain.enums.TipoTelefone;
 
-public class ClienteDaoJDBC implements ClienteDao{
-	
+public class ClienteDaoJDBC implements ClienteDao {
+
 	private Connection conexao;
-	
-	//Construtor força a dependência de uma conexão com o banco de dados	
+
+	// Construtor força a dependência de uma conexão com o banco de dados
 	public ClienteDaoJDBC(Connection conexao) {
 		this.conexao = conexao;
 	}
@@ -28,69 +28,97 @@ public class ClienteDaoJDBC implements ClienteDao{
 	@Override
 	public void insere(Cliente cliente) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void atualiza(Cliente cliente) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void deletaPorId(int id) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public Cliente buscarPorId(int id) {
-		
+
 		PreparedStatement st = null;
 		ResultSet rs = null;
-		
+
 		try {
-			st = conexao.prepareStatement(
-					    "SELECT * FROM clientes c INNER JOIN enderecos e ON c.id = e.id_cliente "
-					    + "NATURAL JOIN telefones t WHERE id = ?");
-			
+			st = conexao.prepareStatement("SELECT * FROM clientes c INNER JOIN enderecos e ON c.id = e.id_cliente "
+					+ "NATURAL JOIN telefones t WHERE id = ?");
+
 			st.setInt(1, id);
 			rs = st.executeQuery();
-			
-			if(rs.next()) {
-				
-				//Resgata os dados do telefone e instancia o objeto
-				Telefone tel = instanciaTelefone(rs);								
-				
-				//Resgata os dados do Endereço e instancia o objeto
-				Endereco end = instanciaEndereco(rs);
-				
-				//Resgata os dados do Cliente
-				Cliente cliente = instanciaCliente(rs, tel, end);
-				
+
+			if (rs.next()) {
+
+				Cliente cliente = recuperaCliente(rs);
+
 				return cliente;
 			}
-			
+
 			return null;
-		} 
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			throw new DBException(e.getMessage());
-		}
-		finally {
+		} finally {
 			Conexao.fechaStatement(st);
 			Conexao.fechaResultSet(rs);
-		}		
+		}
+	}
+
+	private Cliente recuperaCliente(ResultSet rs) throws SQLException {
+		// Resgata os dados do telefone e instancia o objeto
+		Telefone tel = instanciaTelefone(rs);
+
+		// Resgata os dados do Endereço e instancia o objeto
+		Endereco end = instanciaEndereco(rs);
+
+		// Resgata os dados do Cliente
+		Cliente cliente = instanciaCliente(rs, tel, end);
+		return cliente;
 	}
 
 	@Override
 	public List<Cliente> listarTodos() {
-		// TODO Auto-generated method stub
-		return null;
+
+		PreparedStatement st = null;
+		ResultSet rs = null;
+
+		try {
+			st = conexao.prepareStatement("SELECT * FROM clientes c INNER JOIN enderecos e " + "ON c.id = e.id_cliente "
+					+ "NATURAL JOIN telefones t " + "ORDER BY nome");
+
+			rs = st.executeQuery();
+
+			List<Cliente> lista = new ArrayList<>();
+
+			while (rs.next()) {
+
+				Cliente cliente = recuperaCliente(rs);
+				lista.add(cliente);
+			}
+			return lista;
+
+		} catch (SQLException e) {
+
+			throw new DBException(e.getMessage());
+		} finally {
+
+			Conexao.fechaStatement(st);
+			;
+			Conexao.fechaResultSet(rs);
+		}
 	}
 
-	
-	//Métodos privados para instanciar as classes Endereco e Telefone com as informações do ResultSet
-	
+	// Métodos privados para instanciar as classes Endereco e Telefone com as
+	// informações do ResultSet
+
 	private Endereco instanciaEndereco(ResultSet rs) throws SQLException {
 		Endereco end = new Endereco();
 		end.setRua(rs.getString("rua"));
@@ -109,9 +137,9 @@ public class ClienteDaoJDBC implements ClienteDao{
 		tel.setTipo(TipoTelefone.valueOf(rs.getString("tipo")));
 		return tel;
 	}
-	
+
 	private Cliente instanciaCliente(ResultSet rs, Telefone tel, Endereco end) throws SQLException {
-		
+
 		Cliente cliente = new Cliente();
 		cliente.setId(rs.getInt("id"));
 		cliente.setNome(rs.getString("nome"));

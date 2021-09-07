@@ -16,7 +16,7 @@ public class Program {
 		
 		System.out.println("------ Achando cliente por ID ------");
 		
-		Cliente c1 = clienteDao.buscarPorId(2);
+		Cliente c1 = clienteDao.buscaPorId(2);
 		
 		System.out.println(c1);
 		
@@ -42,10 +42,14 @@ public class Program {
 		//System.out.println(c3);
 		
 		System.out.println("------- Atualizando um cliente no banco -----------");
-		clienteNovo = clienteDao.buscarPorId(1);
+		clienteNovo = clienteDao.buscaPorId(1);
 		clienteNovo.setNome("Ronaldo");
 		clienteDao.atualiza(clienteNovo);
 		System.out.println("Atualização completa");
+		
+		System.out.println("------- Deletando um cliente no banco -----------");
+		clienteDao.deletaPorId(11);
+		System.out.println("Deleção completa!");	
 		
 	}
 }

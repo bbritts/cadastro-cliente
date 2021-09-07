@@ -8,6 +8,6 @@ public interface ClienteDao {
 	public void insere(Cliente cliente);
 	public void atualiza(Cliente cliente);
 	public void deletaPorId(int id);
-	Cliente buscarPorId(int id);
+	Cliente buscaPorId(int id);
 	List<Cliente>listarTodos();
 }

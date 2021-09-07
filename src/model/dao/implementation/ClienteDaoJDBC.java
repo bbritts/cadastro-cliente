@@ -123,6 +123,21 @@ public class ClienteDaoJDBC implements ClienteDao {
 			Conexao.fechaStatement(st);
 		}
 	}
+	
+	private void atualizaTelefone(Cliente cliente, PreparedStatement st) throws SQLException {
+
+		st = conexao.prepareStatement(
+				"UPDATE telefones SET ddd = ?, telefone = ?, tipo = ? WHERE id_cliente = ?");
+
+		st.setString(1, cliente.getTelefone().getDdd());
+		st.setString(2, cliente.getTelefone().getTelefone());
+		st.setString(3, cliente.getTelefone().getTipo().toString());
+		st.setInt(4, cliente.getId());
+
+		if (st.executeUpdate() < 1) {
+			throw new DBException("Erro na atualização de Telefones");
+		}
+	}
 
 	private void atualizaEndereco(Cliente cliente, PreparedStatement st) throws SQLException {
 
@@ -142,29 +157,32 @@ public class ClienteDaoJDBC implements ClienteDao {
 		}
 	}
 
-	private void atualizaTelefone(Cliente cliente, PreparedStatement st) throws SQLException {
-
-		st = conexao.prepareStatement(
-				"UPDATE telefones SET ddd = ?, telefone = ?, tipo = ? WHERE id_cliente = ?");
-
-		st.setString(1, cliente.getTelefone().getDdd());
-		st.setString(2, cliente.getTelefone().getTelefone());
-		st.setString(3, cliente.getTelefone().getTipo().toString());
-		st.setInt(4, cliente.getId());
-
-		if (st.executeUpdate() < 1) {
-			throw new DBException("Erro na atualização de Telefones");
+	@Override
+	public void deletaPorId(int id) {
+		
+		PreparedStatement st = null;
+		
+		try {
+			st = conexao.prepareStatement("DELETE FROM enderecos WHERE id_cliente = ?;" +
+					"DELETE FROM telefones WHERE id_cliente = ?;" + 
+					"DELETE FROM clientes WHERE id = ?;");
+			
+			st.setInt(1, id);			
+			st.setInt(2, id);			
+			st.setInt(3, id);			
+			
+			st.executeUpdate();			
+		}
+		catch(SQLException e) {
+			throw new DBException(e.getMessage());
+		}
+		finally {
+			Conexao.fechaStatement(st);
 		}
 	}
 
 	@Override
-	public void deletaPorId(int id) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public Cliente buscarPorId(int id) {
+	public Cliente buscaPorId(int id) {
 
 		PreparedStatement st = null;
 		ResultSet rs = null;
@@ -190,18 +208,6 @@ public class ClienteDaoJDBC implements ClienteDao {
 			Conexao.fechaStatement(st);
 			Conexao.fechaResultSet(rs);
 		}
-	}
-
-	private Cliente recuperaCliente(ResultSet rs) throws SQLException {
-		// Resgata os dados do telefone e instancia o objeto
-		Telefone tel = instanciaTelefone(rs);
-
-		// Resgata os dados do Endereço e instancia o objeto
-		Endereco end = instanciaEndereco(rs);
-
-		// Resgata os dados do Cliente
-		Cliente cliente = instanciaCliente(rs, tel, end);
-		return cliente;
 	}
 
 	@Override
@@ -237,8 +243,7 @@ public class ClienteDaoJDBC implements ClienteDao {
 		}
 	}
 
-	// Métodos privados para instanciar as classes Endereco e Telefone com as
-	// informações do ResultSet
+	// Métodos privados para instanciar as classes Endereco e Telefone com as informações do ResultSet
 
 	private Endereco instanciaEndereco(ResultSet rs) throws SQLException {
 		Endereco end = new Endereco();
@@ -269,6 +274,18 @@ public class ClienteDaoJDBC implements ClienteDao {
 		cliente.setEmail(rs.getString("email"));
 		cliente.setEndereco(end);
 		cliente.setTelefone(tel);
+		return cliente;
+	}
+	
+	private Cliente recuperaCliente(ResultSet rs) throws SQLException {
+		// Resgata os dados do telefone e instancia o objeto
+		Telefone tel = instanciaTelefone(rs);
+
+		// Resgata os dados do Endereço e instancia o objeto
+		Endereco end = instanciaEndereco(rs);
+
+		// Resgata os dados do Cliente
+		Cliente cliente = instanciaCliente(rs, tel, end);
 		return cliente;
 	}
 }

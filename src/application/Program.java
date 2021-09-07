@@ -35,10 +35,17 @@ public class Program {
 				"romario@fifa.com", "Rua dos Camelos", "890", "Jardins", null, 
 				"Campo Grande", SiglaEstado.MS, "67", "98765432", TipoTelefone.CELULAR);
 		
-		clienteDao.insere(clienteNovo);
-		System.out.println("Inserido com sucesso. Novo cliente: %n");
-		System.out.println(clienteNovo.getId());
-		Cliente c3 = clienteDao.buscarPorId(clienteNovo.getId());
-		System.out.println(c3);		
+		//clienteDao.insere(clienteNovo);
+		//System.out.println("Inserido com sucesso. Novo cliente: %n");
+		//System.out.println(clienteNovo.getId());
+		//Cliente c3 = clienteDao.buscarPorId(clienteNovo.getId());
+		//System.out.println(c3);
+		
+		System.out.println("------- Atualizando um cliente no banco -----------");
+		clienteNovo = clienteDao.buscarPorId(1);
+		clienteNovo.setNome("Ronaldo");
+		clienteDao.atualiza(clienteNovo);
+		System.out.println("Atualização completa");
+		
 	}
 }
